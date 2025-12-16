@@ -1,5 +1,7 @@
-- Linting and auto-tests
-- Test the updates on a Linux installation
-- Setup and test the Pip-based installatiion
-- Test the process of making self-sufficient static builds
+- Test the process of making self-sufficient static builds for MacOS
+- Test the process of making self-sufficient static builds for Linux
 - Setup and test static all-in-one builds
+- CI/CD pipeline
+- Linting and auto-tests
+- Better visual design for web-interface
+
