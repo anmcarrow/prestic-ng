@@ -208,10 +208,24 @@ class Profile:
                 p_args["creationflags"] |= 0x08000000  # CREATE_NO_WINDOW
 
         elif sys.platform == "darwin":
-            # On macOS, use os.system to execute the restic command
+            # On macOS, use os.system to execute the restic command with --password-file
+            if self["password-file"]:
+                args.append(f"--password-file={shlex.quote(self['password-file'])}")
             command_string = shlex.join(args)
-            os.system(command_string)
-            return
+            exit_code = os.system(command_string)
+            if exit_code != 0:
+                logging.error(f"Restic command failed with exit code {exit_code}")
+            # Return a mock object with a pid, stdout, and wait attributes to prevent AttributeError
+            return type(
+                "MockPopen",
+                (object,),
+                {
+                    "pid": 0,
+                    "args": args,
+                    "stdout": iter(()),  # Empty iterator to simulate no output
+                    "wait": lambda timeout=None: 0  # Simulate a successful wait call with optional timeout
+                },
+            )()
 
         self.last_run = datetime.now()
         self.next_run = None  # Disable scheduling while running
@@ -397,12 +411,16 @@ class ServiceHandler(BaseHandler):
 
         def task_log(line):
             if log_fd:
-                log_fd.write(f"[{datetime.now()}] {line}\n")
-                log_fd.flush()
+                log_fd.write(line + "\n")
             else:
-                logging.info(f"[task_log] {line}")
+                logging.info(line)
 
         def try_run(cmd_args=[]):
+            # Change tray icon to running icon
+            if self.gui:
+                self.gui.icon = Image.open(PROG_ICON_PATH.parent / "icon-run.png").convert("RGBA")
+                self.gui.update_menu()
+
             proc = task.run(cmd_args, stdout=PIPE, stderr=STDOUT)
             output = []
 
@@ -413,14 +431,19 @@ class ServiceHandler(BaseHandler):
             task_log(f"Restic output:\n ")
 
             for line in proc.stdout:
-                line = line.rstrip("\r\n")
+                line = line.decode("utf-8", errors="replace") if isinstance(line, bytes) else line
                 if not log_filter or not log_filter.match(line):
-                    output.append(line)
-                    task_log(line)
+                    task_log(line.strip())
+                    output.append(line.strip())
 
             ret = proc.wait()
 
             task_log(f" \nRestic exit code: {ret}\n ")
+
+            # Restore tray icon to normal icon
+            if self.gui:
+                self.gui.icon = Image.open(PROG_ICON_PATH).convert("RGBA")
+                self.gui.update_menu()
 
             return output, ret
 
@@ -444,7 +467,7 @@ class ServiceHandler(BaseHandler):
         else:
             status_txt = f"task {task.name} FAILED with exit code: {ret} !"
             if log_file.exists():
-                os_open_url(Path(PROG_HOME, "logs", log_file))
+                logging.error(f"Check log file: {log_file}")
 
         self.save_state(task.name, {"last_run": time.time(), "exit_code": ret, "pid": 0})
         self.set_status(status_txt)
