@@ -492,7 +492,7 @@ class ServiceHandler(BaseHandler):
             icon = Image.open(PROG_ICON_PATH).convert("RGBA")
             self.icons = {
                 "norm": icon,
-                "busy": Image.alpha_composite(Image.new("RGBA", icon.size, (255, 0, 255, 255)), icon),
+                "busy": Image.alpha_composite(Image.new("RGBA", icon.size, (0, 0, 0, 255)), icon),
                 "fail": Image.alpha_composite(Image.new("RGBA", icon.size, (255, 0, 0, 255)), icon),
             }
 
