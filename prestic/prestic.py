@@ -37,14 +37,7 @@ except:
 
 
 PROG_NAME = "prestic"
-PROG_ICON = (
-    b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAKlBMVEU3My+7UVNMOTPDsF5mRD5sXkuunIJvUUOOdFrQzsvx22rJs5yVhlz19vZPK"
-    b"bxAAAAACnRSTlMB+yr6kmH65b/0S/q8VwAAAWpJREFUKM+Vkb9Lw0AUx4+jha6Z7BhKCtlPHUIW01Q6lpiAzoVb0g6FapYMrW20f4AUhGaKotwfEJ"
-    b"Czi4XEH3GzQpH7X7xrmypuPnj33vvA3b33fQD83yCUV8ESoeI4wDbrIrXHBqcN6RJ0JSmAFjxIetVAlSQJcJeU8SFCens0yIHpJwjt41F3A8pm4mL"
-    b"s4tQcrEDZUF0qLJYVAXYMcMKWvGSsDxQPmA0ZhtdskjwswwVQLFBROUjZNOt8vi+AzXsqNYthzKZ+Zzn7ADbvsWgUXhh79CljVxVHTFFXk3BCcTz7"
-    b"6tl1MZen6ekb/zX1tehUXPG0KPMT2s4QufP4o4XekUb0ecZr5JiyUKKqEYKyV0JuZLjWiAOic7/diFZEvMg0Et3LG6CtAdndADhEJOIAPeVCqy2EW"
-    b"lyhfg5KlLoU07i5XcXFSqBnIOdESTDG43mwBfAscKzqcO9nfbWAn8fGL3D+Z8E1K0+/AZb2itxu6ZQTAAAAAElFTkSuQmCC"
-)
+PROG_ICON_PATH = Path(__file__).parent / "icon.png"
 PROG_BUILD = "$Format:%h$"
 
 if sys.platform == "win32" and Path(os.getenv("APPDATA")).exists():
@@ -468,7 +461,7 @@ class ServiceHandler(BaseHandler):
         Thread(target=self.proc_webui, name="webui").start()
 
         try:
-            icon = Image.open(BytesIO(b64decode(PROG_ICON))).convert("RGBA")
+            icon = Image.open(PROG_ICON_PATH).convert("RGBA")
             self.icons = {
                 "norm": icon,
                 "busy": Image.alpha_composite(Image.new("RGBA", icon.size, (255, 0, 255, 255)), icon),
@@ -781,8 +774,22 @@ def main(argv=None):
 
 def gui():
     # Fixes some issues when invoked by pythonw.exe (but we should use .prestic/stderr.txt I suppose)
-    sys.stdout = sys.stdout or open(os.devnull, "w")
-    sys.stderr = sys.stderr or open(os.devnull, "w")
+    sys.stdout = sys.stdout or open(os.devnull, "w", encoding="utf-8")
+    sys.stderr = sys.stderr or open(os.devnull, "w", encoding="utf-8")
+
+    if pystray:
+        from pystray import Icon
+        from PIL import Image
+
+        # Load the icon from the PNG file
+        icon_image = Image.open(PROG_ICON_PATH)
+
+        # Define the tray icon
+        tray_icon = Icon(PROG_NAME, icon_image)
+        tray_icon.run()
+    else:
+        logging.warning("pystray module is not available. GUI functionality is disabled.")
+
     main([*sys.argv[1:], "--service"])
 
 
