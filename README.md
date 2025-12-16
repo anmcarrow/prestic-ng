@@ -4,6 +4,8 @@
 Prestic is a profile manager and task scheduler for [Restic](https://restic.net/) CLI backup tool. It works on all
 operating systems when you can run Python an Restic itself but GUI features and keyring functionality may vary by a platform.
 
+You can use it with or without GUI, for your a desktop, home server or pet project VDS. 
+
 ![MacOS 15 build](./assets/screenshot.png)
 
 # Installation

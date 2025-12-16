@@ -1,5 +1,8 @@
 - Test the process of making self-sufficient static builds for MacOS
 - Test the process of making self-sufficient static builds for Linux
+- Disabling GUI in script by default
+- Dockerization
+- Systemd-service installation support
 - Auto-changing icon packs for dark/light environments
 - Setup and test static all-in-one builds
 - CI/CD pipeline
