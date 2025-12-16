@@ -1,13 +1,17 @@
+=============================
+README IS UNDER ACTIVE DEVELOPMENT
+=============================
+
 # Prestic
 Prestic is a profile manager and task scheduler for [restic](https://restic.net/). It works on all
 operating systems supported by restic but GUI and keyring functionality may vary by platform.
 
-![Screenshot](https://github.com/ducalex/prestic/raw/master/screenshot.png)
+![Screenshot](./assets/screenshot.png)
 
 
 # Installation
 
-Python 3.6+ and [pip](https://pip.pypa.io/en/stable/installing/) are required. Then:
+Python 3.10+ and [pip](https://pip.pypa.io/en/stable/installing/) are required. Then:
 - `pip install http://github.com/ducalex/prestic/tarball/master#egg=prestic`
 
 _Note: On Ubuntu you need to [add ~/.local/bin to your path](https://bugs.launchpad.net/ubuntu/+source/bash/+bug/1588562)
@@ -16,6 +20,15 @@ _Note: On Ubuntu you need to [add ~/.local/bin to your path](https://bugs.launch
 _Note: If you prefer you can also directly download `prestic.py` and put it somewhere in your PATH
  (it is standalone)._
 
+### MacOS Usage
+
+To use Prestic on macOS, ensure you have Python 3 installed. You can install the required pip packages with the following command:
+
+```bash
+pip install pystray pillow
+```
+
+This will enable GUI functionality for Prestic on macOS.
 
 ### Start Prestic on login
 - Windows: Put a link to `prestic-gui.exe` in your `Startup` folder (run `where prestic-gui` to locate it if needed)
