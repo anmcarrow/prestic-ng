@@ -6,7 +6,6 @@ operating systems when you can run Python an Restic itself but GUI features and 
 
 ![MacOS 15 build](./assets/screenshot.png)
 
-
 # Installation
 
 ## Pip-package deploying
@@ -25,7 +24,7 @@ _Note: On Ubuntu you need to [add ~/.local/bin to your path](https://bugs.launch
 _Note: If you prefer you can also add `prestic.py`  in your PATH variable for faster execution._
 
 ## Static builds
-<TBD>
+TBD
 
 ## MacOS Usage
 To have anotifications on MacOS you should allow the from-scripts-notifications in your security center (see [the thread here](https://forum.latenightsw.com/t/trying-to-use-terminal-for-display-notification/5068)). 
@@ -35,7 +34,7 @@ To have anotifications on MacOS you should allow the from-scripts-notifications 
 ### Start Prestic on login
 - Windows: Put a link to `prestic-gui.exe` in your `Startup` folder (run `where prestic-gui` to locate it if needed)
 - Linux: Add command `prestic --gui` to your startup applications
-- MacOS: <TBD>
+- MacOS: TBD
 
 # Usage
 - Run profile-defined default command: `prestic -p profilename`
