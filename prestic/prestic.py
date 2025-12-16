@@ -388,7 +388,7 @@ class ServiceHandler(BaseHandler):
             log_fd = None
 
         if "backup" in task.command:  # and task.verbose < 2:
-            log_filter = re.compile("^unchanged\s/")
+            log_filter = re.compile(r"^unchanged\\s/")
         else:
             log_filter = None
 
@@ -748,9 +748,9 @@ def format_date(dt):
 
 
 def parse_size(size):
-    if m := re.match(f"^\s*([\d\.]+)\s*([BKMGTP])B?$", f"{size}".upper()):
+    if m := re.match(r"^\s*([\d\.]+)\s*([BKMGTP])B?$", f"{size}".upper()):
         return int(float(m.group(1)) * (2 ** (10 * "BKMGTP".index(m.group(2)))))
-    elif m := re.match(f"^\s*([\d]+)\s*$", f"{size}"):
+    elif m := re.match(r"^\s*([\d]+)\s*$", f"{size}"):
         return int(m.group(1))
     return 0
 
