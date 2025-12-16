@@ -1,7 +1,7 @@
 # __README NOW IS UNDER ACTIVE REFACTORING__
 
 # Prestic
-Prestic is a profile manager and task scheduler for [restic](https://restic.net/) CLI backup tool. It works on all
+Prestic is a profile manager and task scheduler for [Restic](https://restic.net/) CLI backup tool. It works on all
 operating systems when you can run Python an Restic itself but GUI features and keyring functionality may vary by a platform.
 
 ![MacOS 15 build](./assets/screenshot.png)
