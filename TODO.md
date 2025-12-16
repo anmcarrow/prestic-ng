@@ -1,5 +1,6 @@
-- Test the updates on a Linux installation
+- Fixing empty logs / stdout logs on MacOS
 - Log rotation functions
+- Test the updates on a Linux installation
 - Setup and test the Pip-based installatiion
 - Test the process of making self-sufficient static builds
 - Setup and test static all-in-one builds
