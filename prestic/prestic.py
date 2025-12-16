@@ -37,14 +37,7 @@ except:
 
 
 PROG_NAME = "prestic"
-PROG_ICON = (
-    b"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAKlBMVEU3My+7UVNMOTPDsF5mRD5sXkuunIJvUUOOdFrQzsvx22rJs5yVhlz19vZPK"
-    b"bxAAAAACnRSTlMB+yr6kmH65b/0S/q8VwAAAWpJREFUKM+Vkb9Lw0AUx4+jha6Z7BhKCtlPHUIW01Q6lpiAzoVb0g6FapYMrW20f4AUhGaKotwfEJ"
-    b"Czi4XEH3GzQpH7X7xrmypuPnj33vvA3b33fQD83yCUV8ESoeI4wDbrIrXHBqcN6RJ0JSmAFjxIetVAlSQJcJeU8SFCens0yIHpJwjt41F3A8pm4mL"
-    b"s4tQcrEDZUF0qLJYVAXYMcMKWvGSsDxQPmA0ZhtdskjwswwVQLFBROUjZNOt8vi+AzXsqNYthzKZ+Zzn7ADbvsWgUXhh79CljVxVHTFFXk3BCcTz7"
-    b"6tl1MZen6ekb/zX1tehUXPG0KPMT2s4QufP4o4XekUb0ecZr5JiyUKKqEYKyV0JuZLjWiAOic7/diFZEvMg0Et3LG6CtAdndADhEJOIAPeVCqy2EW"
-    b"lyhfg5KlLoU07i5XcXFSqBnIOdESTDG43mwBfAscKzqcO9nfbWAn8fGL3D+Z8E1K0+/AZb2itxu6ZQTAAAAAElFTkSuQmCC"
-)
+PROG_ICON_PATH = Path(__file__).parent / "icon.png"
 PROG_BUILD = "$Format:%h$"
 
 if sys.platform == "win32" and Path(os.getenv("APPDATA")).exists():
@@ -211,9 +204,28 @@ class Profile:
         if sys.platform == "win32":
             cpu_priorities = {"idle": 0x0040, "low": 0x4000, "normal": 0x0020, "high": 0x0080}
             p_args["creationflags"] = cpu_priorities.get(self["cpu-priority"], 0)
-            # do not create a window/console if we capture ALL output
-            if stdout != None or stderr != None:
+            if stdout is not None or stderr is not None:
                 p_args["creationflags"] |= 0x08000000  # CREATE_NO_WINDOW
+
+        elif sys.platform == "darwin":
+            # On macOS, use os.system to execute the restic command with --password-file
+            if self["password-file"]:
+                args.append(f"--password-file={shlex.quote(self['password-file'])}")
+            command_string = shlex.join(args)
+            exit_code = os.system(command_string)
+            if exit_code != 0:
+                logging.error(f"Restic command failed with exit code {exit_code}")
+            # Return a mock object with a pid, stdout, and wait attributes to prevent AttributeError
+            return type(
+                "MockPopen",
+                (object,),
+                {
+                    "pid": 0,
+                    "args": args,
+                    "stdout": iter(()),  # Empty iterator to simulate no output
+                    "wait": lambda timeout=None: 0  # Simulate a successful wait call with optional timeout
+                },
+            )()
 
         self.last_run = datetime.now()
         self.next_run = None  # Disable scheduling while running
@@ -388,7 +400,7 @@ class ServiceHandler(BaseHandler):
             log_fd = None
 
         if "backup" in task.command:  # and task.verbose < 2:
-            log_filter = re.compile("^unchanged\s/")
+            log_filter = re.compile(r"^unchanged\\s/")
         else:
             log_filter = None
 
@@ -399,12 +411,16 @@ class ServiceHandler(BaseHandler):
 
         def task_log(line):
             if log_fd:
-                log_fd.write(f"[{datetime.now()}] {line}\n")
-                log_fd.flush()
+                log_fd.write(line + "\n")
             else:
-                logging.info(f"[task_log] {line}")
+                logging.info(line)
 
         def try_run(cmd_args=[]):
+            # Change tray icon to running icon
+            if self.gui:
+                self.gui.icon = Image.open(PROG_ICON_PATH.parent / "icon-run.png").convert("RGBA")
+                self.gui.update_menu()
+
             proc = task.run(cmd_args, stdout=PIPE, stderr=STDOUT)
             output = []
 
@@ -415,14 +431,19 @@ class ServiceHandler(BaseHandler):
             task_log(f"Restic output:\n ")
 
             for line in proc.stdout:
-                line = line.rstrip("\r\n")
+                line = line.decode("utf-8", errors="replace") if isinstance(line, bytes) else line
                 if not log_filter or not log_filter.match(line):
-                    output.append(line)
-                    task_log(line)
+                    task_log(line.strip())
+                    output.append(line.strip())
 
             ret = proc.wait()
 
             task_log(f" \nRestic exit code: {ret}\n ")
+
+            # Restore tray icon to normal icon
+            if self.gui:
+                self.gui.icon = Image.open(PROG_ICON_PATH).convert("RGBA")
+                self.gui.update_menu()
 
             return output, ret
 
@@ -446,7 +467,7 @@ class ServiceHandler(BaseHandler):
         else:
             status_txt = f"task {task.name} FAILED with exit code: {ret} !"
             if log_file.exists():
-                os_open_url(Path(PROG_HOME, "logs", log_file))
+                logging.error(f"Check log file: {log_file}")
 
         self.save_state(task.name, {"last_run": time.time(), "exit_code": ret, "pid": 0})
         self.set_status(status_txt)
@@ -468,10 +489,10 @@ class ServiceHandler(BaseHandler):
         Thread(target=self.proc_webui, name="webui").start()
 
         try:
-            icon = Image.open(BytesIO(b64decode(PROG_ICON))).convert("RGBA")
+            icon = Image.open(PROG_ICON_PATH).convert("RGBA")
             self.icons = {
                 "norm": icon,
-                "busy": Image.alpha_composite(Image.new("RGBA", icon.size, (255, 0, 255, 255)), icon),
+                "busy": Image.alpha_composite(Image.new("RGBA", icon.size, (0, 0, 0, 255)), icon),
                 "fail": Image.alpha_composite(Image.new("RGBA", icon.size, (255, 0, 0, 255)), icon),
             }
 
@@ -748,9 +769,9 @@ def format_date(dt):
 
 
 def parse_size(size):
-    if m := re.match(f"^\s*([\d\.]+)\s*([BKMGTP])B?$", f"{size}".upper()):
+    if m := re.match(r"^\s*([\d\.]+)\s*([BKMGTP])B?$", f"{size}".upper()):
         return int(float(m.group(1)) * (2 ** (10 * "BKMGTP".index(m.group(2)))))
-    elif m := re.match(f"^\s*([\d]+)\s*$", f"{size}"):
+    elif m := re.match(r"^\s*([\d]+)\s*$", f"{size}"):
         return int(m.group(1))
     return 0
 
@@ -781,8 +802,22 @@ def main(argv=None):
 
 def gui():
     # Fixes some issues when invoked by pythonw.exe (but we should use .prestic/stderr.txt I suppose)
-    sys.stdout = sys.stdout or open(os.devnull, "w")
-    sys.stderr = sys.stderr or open(os.devnull, "w")
+    sys.stdout = sys.stdout or open(os.devnull, "w", encoding="utf-8")
+    sys.stderr = sys.stderr or open(os.devnull, "w", encoding="utf-8")
+
+    if pystray:
+        from pystray import Icon
+        from PIL import Image
+
+        # Load the icon from the PNG file
+        icon_image = Image.open(PROG_ICON_PATH)
+
+        # Define the tray icon
+        tray_icon = Icon(PROG_NAME, icon_image)
+        tray_icon.run()
+    else:
+        logging.warning("pystray module is not available. GUI functionality is disabled.")
+
     main([*sys.argv[1:], "--service"])
 
 
