@@ -22,6 +22,7 @@ from pathlib import Path, PurePosixPath
 from subprocess import Popen, PIPE, STDOUT
 from socketserver import TCPServer
 from threading import Thread
+import subprocess
 
 try:
     from base64 import b64decode
@@ -471,7 +472,9 @@ class ServiceHandler(BaseHandler):
 
         self.save_state(task.name, {"last_run": time.time(), "exit_code": ret, "pid": 0})
         self.set_status(status_txt)
-        if task["notifications"] or ret != 0:
+        if task["notifications"] and ret == 0:
+            self.notify(status_txt)
+        if task["notifications"] and ret != 0:
             self.notify(("\n".join(output[-4:]))[-220:].strip(), status_txt)
 
     def run(self, profile, args=[]):
@@ -501,7 +504,7 @@ class ServiceHandler(BaseHandler):
 
             def on_run_now_click(task):
                 if task["notifications"]:
-                    self.notify(f"{task.name} will run next")
+                    self.notify(f"The task {task.name} will run next")
                 task.next_run = datetime.now()
 
             def on_log_click(task):
@@ -782,7 +785,7 @@ def main(argv=None):
     parser.add_argument("-p", "--profile", default="default", help="profile to use")
     parser.add_argument("--service", const=True, action="store_const", help="start service")
     parser.add_argument("--keyring", const=True, action="store_const", help="keyring management")
-    parser.add_argument("command", nargs="...", help="restic command to run...")
+    parser.add_argument("command", nargs="*", help="restic command to run...")
     args = parser.parse_args(argv)
 
     logging.basicConfig(format="[%(levelname)s] %(message)s", level=logging.INFO)

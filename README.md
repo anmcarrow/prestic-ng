@@ -30,6 +30,10 @@ pip install pystray pillow
 
 This will enable GUI functionality for Prestic on macOS.
 
+You also should allow the from-scripts-notifications in your security center (see [the thread here](https://forum.latenightsw.com/t/trying-to-use-terminal-for-display-notification/5068)). 
+
+![Macos Script Notifications](./assets/macos_notify_settings.png)
+
 ### Start Prestic on login
 - Windows: Put a link to `prestic-gui.exe` in your `Startup` folder (run `where prestic-gui` to locate it if needed)
 - Linux: Add command `prestic --gui` to your startup applications

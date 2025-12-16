@@ -1,5 +1,3 @@
-- Fixing empty logs / stdout logs on MacOS
-- MacOS native notifications
 - Log rotation functions
 - Linting and auto-tests
 - Test the updates on a Linux installation
