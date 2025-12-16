@@ -107,6 +107,7 @@ args =
 verbose =
 # (regex) ignore lines matching this expression when writing log files
 log-filter = ^unchanged\s/
+
 # (string) set the cache directory
 cache-dir =
 
@@ -131,6 +132,10 @@ password-keyring = my-repo
 description = Backup to USB Storage
 inherit = my-repo
 schedule = daily at 12:00
+
+# prunning old job logs after N days
+prune-logs-after = 14
+
 command = backup
 args =
     /home/user/folder1

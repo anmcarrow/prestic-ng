@@ -339,9 +339,33 @@ class ServiceHandler(BaseHandler):
             self.status = message
 
     def notify(self, message, title=None):
-        if self.gui and self.gui.HAS_NOTIFICATION:
-            self.gui.notify(message, f"{PROG_NAME}: {title}" if title else PROG_NAME)
-            time.sleep(5)  # 0.5s needed for stability, rest to give time for reading
+        try:
+            if self.gui and hasattr(self.gui, 'HAS_NOTIFICATION') and self.gui.HAS_NOTIFICATION:
+                self.gui.notify(message, f"{PROG_NAME}: {title}" if title else PROG_NAME)
+                time.sleep(5)  # 0.5s needed for stability, rest to give time for reading
+        except Exception as e:
+            logging.warning(f"Notification failed: {e}")
+
+    def prune_old_logs(self, task):
+        """Delete logs related to the task that are older than the prune-logs-after parameter."""
+        prune_days = task["prune-logs-after"]
+        if not prune_days:
+            logging.info(f"No prune-logs-after parameter set for task {task.name}. Skipping log pruning.")
+            return
+
+        try:
+            log_dir = Path(PROG_HOME, "logs")
+            if not log_dir.exists():
+                logging.info(f"Log directory {log_dir} does not exist. Skipping log pruning.")
+                return
+
+            cutoff_date = datetime.now() - timedelta(days=int(prune_days))
+            for log_file in log_dir.glob(f"*-{task.name}.txt"):
+                if log_file.stat().st_mtime < cutoff_date.timestamp():
+                    logging.info(f"Deleting old log file: {log_file}")
+                    log_file.unlink()
+        except Exception as e:
+            logging.error(f"Error while pruning logs for task {task.name}: {e}")
 
     def proc_scheduler(self):
         # TO DO: Handle missed tasks more gracefully (ie computer sleep). We shouldn't run a
@@ -372,7 +396,13 @@ class ServiceHandler(BaseHandler):
 
             except Exception as e:
                 logging.error(f"service_loop crashed: {type(e).__name__} '{e}'")
-                self.notify(str(e), f"Unhandled exception: {type(e).__name__}")
+                import traceback
+                logging.error(traceback.format_exc())
+                try:
+                    if self.gui and hasattr(self.gui, 'HAS_NOTIFICATION') and self.gui.HAS_NOTIFICATION:
+                        self.notify(str(e), f"Unhandled exception: {type(e).__name__}")
+                except:
+                    pass
                 # raise e
 
             time.sleep(min(sleep_time, 10))
@@ -463,6 +493,7 @@ class ServiceHandler(BaseHandler):
 
         if ret == 0:
             status_txt = f"task {task.name} finished successfully."
+            self.prune_old_logs(task)
         elif ret == 3 and "backup" in task.command:
             status_txt = f"task {task.name} finished with some warnings..."
         else:

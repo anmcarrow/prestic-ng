@@ -1,4 +1,3 @@
-- Log rotation functions
 - Linting and auto-tests
 - Test the updates on a Linux installation
 - Setup and test the Pip-based installatiion
