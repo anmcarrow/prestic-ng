@@ -204,9 +204,14 @@ class Profile:
         if sys.platform == "win32":
             cpu_priorities = {"idle": 0x0040, "low": 0x4000, "normal": 0x0020, "high": 0x0080}
             p_args["creationflags"] = cpu_priorities.get(self["cpu-priority"], 0)
-            # do not create a window/console if we capture ALL output
-            if stdout != None or stderr != None:
+            if stdout is not None or stderr is not None:
                 p_args["creationflags"] |= 0x08000000  # CREATE_NO_WINDOW
+
+        elif sys.platform == "darwin":
+            # On macOS, use os.system to execute the restic command
+            command_string = shlex.join(args)
+            os.system(command_string)
+            return
 
         self.last_run = datetime.now()
         self.next_run = None  # Disable scheduling while running
