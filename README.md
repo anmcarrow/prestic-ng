@@ -1,43 +1,41 @@
-=============================
-README IS UNDER ACTIVE DEVELOPMENT
-=============================
+# __README NOW IS UNDER ACTIVE REFACTORING__
 
 # Prestic
-Prestic is a profile manager and task scheduler for [restic](https://restic.net/). It works on all
-operating systems supported by restic but GUI and keyring functionality may vary by platform.
+Prestic is a profile manager and task scheduler for [restic](https://restic.net/) CLI backup tool. It works on all
+operating systems when you can run Python an Restic itself but GUI features and keyring functionality may vary by a platform.
 
-![Screenshot](./assets/screenshot.png)
+![MacOS 15 build](./assets/screenshot.png)
 
 
 # Installation
 
-Python 3.10+ and [pip](https://pip.pypa.io/en/stable/installing/) are required. Then:
-- `pip install http://github.com/ducalex/prestic/tarball/master#egg=prestic`
+## Pip-package deploying
+1. Install Python 3.10+ and [pip](https://pip.pypa.io/en/stable/installing/). 
+2. Execute `pip install http://github.com/ducalex/prestic/tarball/master#egg=prestic` in terminal.
 
 _Note: On Ubuntu you need to [add ~/.local/bin to your path](https://bugs.launchpad.net/ubuntu/+source/bash/+bug/1588562)
  if needed and run `sudo apt install gir1.2-appindicator3-0.1` for the gui to work._
 
-_Note: If you prefer you can also directly download `prestic.py` and put it somewhere in your PATH
- (it is standalone)._
+## File-based method
+1. Install Python
+2. Install `pystray` and `pillow` python packages
+3. Get the content of [prestic](./prestic/) directory.
+4. Execute the `prestic/prestic.py` script.
 
-### MacOS Usage
+_Note: If you prefer you can also add `prestic.py`  in your PATH variable for faster execution._
 
-To use Prestic on macOS, ensure you have Python 3 installed. You can install the required pip packages with the following command:
+## Static builds
+<TBD>
 
-```bash
-pip install pystray pillow
-```
-
-This will enable GUI functionality for Prestic on macOS.
-
-You also should allow the from-scripts-notifications in your security center (see [the thread here](https://forum.latenightsw.com/t/trying-to-use-terminal-for-display-notification/5068)). 
+## MacOS Usage
+To have anotifications on MacOS you should allow the from-scripts-notifications in your security center (see [the thread here](https://forum.latenightsw.com/t/trying-to-use-terminal-for-display-notification/5068)). 
 
 ![Macos Script Notifications](./assets/macos_notify_settings.png)
 
 ### Start Prestic on login
 - Windows: Put a link to `prestic-gui.exe` in your `Startup` folder (run `where prestic-gui` to locate it if needed)
 - Linux: Add command `prestic --gui` to your startup applications
-
+- MacOS: <TBD>
 
 # Usage
 - Run profile-defined default command: `prestic -p profilename`
