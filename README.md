@@ -33,7 +33,7 @@ To have a notifications on MacOS you should allow the from-scripts-notifications
 
 ### Start Prestic on login
 - Windows: Put a link to `prestic-gui.exe` in your `Startup` folder (run `where prestic-gui` to locate it if needed)
-- Linux: Add command `prestic --gui` to your startup applications
+- Linux: Add command `prestic --gui` to your startup applications (run `which prestic-gui` to locate it if needed)
 - MacOS: TBD
 
 # Usage
