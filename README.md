@@ -8,6 +8,11 @@ operating systems when you can run Python an Restic itself but GUI features and 
 
 # Installation
 
+## Installing Restic CLI
+
+You should [install Restic CLI](https://restic.readthedocs.io/en/stable/020_installation.html) before using PRestic. 
+For this task you usually can use your package manager (apt, yum, pacman, brew, etc.) 
+
 ## Pip-package deploying
 1. Install Python 3.10+ and [pip](https://pip.pypa.io/en/stable/installing/). 
 2. Execute `pip install http://github.com/anmcarrow/prestic-ng/tarball/master#egg=prestic` in terminal.
