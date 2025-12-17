@@ -2,9 +2,7 @@
 
 # Prestic
 Prestic is a profile manager and task scheduler for [Restic](https://restic.net/) CLI backup tool. It works on all
-operating systems when you can run Python an Restic itself but GUI features and keyring functionality may vary by a platform.
-
-You can use it with or without GUI, for your a desktop, home server or pet project VDS. 
+operating systems when you can run Python an Restic itself but GUI features and keyring functionality may vary by a platform. It can do anything that Restic can but in a way of a single-source planner with INI-style configuration. You can use it with or without GUI, for your a desktop, home server or VDS. 
 
 ![MacOS 15 build](./assets/screenshot.png)
 
@@ -12,7 +10,7 @@ You can use it with or without GUI, for your a desktop, home server or pet proje
 
 ## Pip-package deploying
 1. Install Python 3.10+ and [pip](https://pip.pypa.io/en/stable/installing/). 
-2. Execute `pip install http://github.com/ducalex/prestic/tarball/master#egg=prestic` in terminal.
+2. Execute `pip install http://github.com/anmcarrow/prestic-ng/tarball/master#egg=prestic` in terminal.
 
 _Note: On Ubuntu you need to [add ~/.local/bin to your path](https://bugs.launchpad.net/ubuntu/+source/bash/+bug/1588562)
  if needed and run `sudo apt install gir1.2-appindicator3-0.1` for the gui to work._
@@ -29,7 +27,7 @@ _Note: If you prefer you can also add `prestic.py`  in your PATH variable for fa
 TBD
 
 ## MacOS Usage
-To have anotifications on MacOS you should allow the from-scripts-notifications in your security center (see [the thread here](https://forum.latenightsw.com/t/trying-to-use-terminal-for-display-notification/5068)). 
+To have a notifications on MacOS you should allow the from-scripts-notifications in your security center (see [the thread here](https://forum.latenightsw.com/t/trying-to-use-terminal-for-display-notification/5068)). 
 
 ![Macos Script Notifications](./assets/macos_notify_settings.png)
 

@@ -1,11 +1,15 @@
-- Test the process of making self-sufficient static builds for MacOS
-- Test the process of making self-sufficient static builds for Linux
-- Disabling GUI in script by default
-- Dockerization
-- Systemd-service installation support
-- Auto-changing icon packs for dark/light environments
-- Setup and test static all-in-one builds
-- CI/CD pipeline
-- Linting and auto-tests
-- Better visual design for web-interface
+- [BUG] Fix prestic folder and web-interface opening in MacOS
+- [FEAT] Test the process of making self-sufficient static builds for MacOS
+- [FEAT] Test the process of making self-sufficient static builds for Linux
+- [FEAT] The last status of the job in GUI job-related submenu
+- [REF] Disabling GUI in script by default
+- [DIST] Dockerization
+- [DIST] Systemd-service installation support
+- [FEAT] Local sendmail reports support
+- [FEAT] Remote SMTP reports support
+- [FEAT] Auto-changing icon packs for dark/light environments
+- [PROC] Setup and test static all-in-one builds
+- [PROC] CI/CD pipeline
+- [SEC] Linting and auto-tests
+- [FEAT] Better visual design for web-interface
 
