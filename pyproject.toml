@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prestic"
+version = "0.0.2"
+description = "Prestic is a profile manager and task scheduler for restic"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Andrey Makarov", email = "mb@aamcarrow.info"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pystray",
+    "keyring"
+]
+
+[project.urls]
+Homepage = "https://github.com/anmcarrow/prestic-ng"
+
+[project.scripts]
+prestic = "prestic:main"
+
+[project.gui-scripts]
+prestic-gui = "prestic:gui"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["prestic*"]
+
+[tool.setuptools.package-data]
+prestic = ["icon.png", "icon-run.png"]

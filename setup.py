@@ -4,10 +4,10 @@ setuptools.setup(
     name="prestic",
     version="0.0.2",
     license="MIT",
-    author="Alex Duchesne",
-    author_email="alex@alexou.net",
+    author="Andrey Makarov",
+    author_email="mb@aamakarov.info",
     description="Prestic is a profile manager and task scheduler for restic",
-    url="https://github.com/ducalex/prestic",
+    url="https://github.com/anmcarrow/prestic-ng",
     packages=["prestic"],
     package_data={
         "prestic": ["icon.png", "icon-run.png"],
