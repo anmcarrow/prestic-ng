@@ -3,7 +3,7 @@
 - [FEAT] Test the process of making self-sufficient static builds for MacOS
 - [FEAT] Test the process of making self-sufficient static builds for Linux
 - [FEAT] The last status of the job in GUI job-related submenu
-- [REF] Disabling GUI in script by default
+- [REF] Disabling GUI and web in script by default
 - [DIST] Dockerization
 - [DIST] Systemd-service installation support
 - [FEAT] Local sendmail reports support
