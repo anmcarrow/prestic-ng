@@ -1,4 +1,5 @@
 - [BUG] Fix prestic folder and web-interface opening in MacOS
+- [FEAT] Add pre-hook and post-hook commands support 
 - [FEAT] Test the process of making self-sufficient static builds for MacOS
 - [FEAT] Test the process of making self-sufficient static builds for Linux
 - [FEAT] The last status of the job in GUI job-related submenu
