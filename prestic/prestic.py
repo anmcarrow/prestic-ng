@@ -839,17 +839,7 @@ def gui():
     sys.stdout = sys.stdout or open(os.devnull, "w", encoding="utf-8")
     sys.stderr = sys.stderr or open(os.devnull, "w", encoding="utf-8")
 
-    if pystray:
-        from pystray import Icon
-        from PIL import Image
-
-        # Load the icon from the PNG file
-        icon_image = Image.open(PROG_ICON_PATH)
-
-        # Define the tray icon
-        tray_icon = Icon(PROG_NAME, icon_image)
-        tray_icon.run()
-    else:
+    if not pystray:
         logging.warning("pystray module is not available. GUI functionality is disabled.")
 
     main([*sys.argv[1:], "--service"])
