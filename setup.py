@@ -9,6 +9,10 @@ setuptools.setup(
     description="Prestic is a profile manager and task scheduler for restic",
     url="https://github.com/ducalex/prestic",
     packages=["prestic"],
+    package_data={
+        "prestic": ["icon.png", "icon-run.png"],
+    },
+    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
